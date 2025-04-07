@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 type ConnectionObject = {
     isConnected?: number
@@ -19,6 +19,8 @@ async function dbConnect(): Promise<void> {
         connection.isConnected = db.connections[0].readyState
 
         console.log("DB connected successfully")
+
+        
     } catch (error) {
         console.log("DB connection failed", error)
         process.exit(1)

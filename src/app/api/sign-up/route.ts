@@ -5,6 +5,7 @@ import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 
 //this is a custom user authentication logic 
 //registering new user 
+//user can register username and password multiple times until they verify it with code after it wont allow user to register with same username or eamil
 
 export async function POST(request: Request) {
     await dbConnect()
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
 
                 existingUserByEmail.verifyCode = verifyCode;
 
-                existingUserByEmail.verifyCodeExp = new Date(Date.now() + 360000)
+                existingUserByEmail.verifyCodeExp = new Date(Date.now() + 3600000)
 
                 await existingUserByEmail.save()
                 
@@ -75,17 +76,18 @@ export async function POST(request: Request) {
             username,
             verifyCode
         )
+        console.log("emailResponse: ",emailResponse)
 
         if(!emailResponse.success){
             return Response.json({
-                successs:false,
+                success:false,
                 message:emailResponse.message
             },{status: 500})
         }
 
         return Response.json({
-            successs:false,
-            message:"User register your email"
+            success:true,
+            message:"User registered successfully.please verify your email"
         },{status: 201})
 
     } catch (error: any) {
