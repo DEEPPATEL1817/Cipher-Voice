@@ -27,7 +27,7 @@ export async function GET(request: Request){
 
         return Response.json({
             success:false,
-            message: "Invalid query parameter"
+            message: usernameErrors
         },{status:400})
     }
 
