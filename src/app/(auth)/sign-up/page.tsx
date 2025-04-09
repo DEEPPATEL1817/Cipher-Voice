@@ -10,7 +10,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { signUpSchema } from "@/schemas/signUpSchema"
 import { ApiResponse } from "@/types/ApiResponse"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react";
@@ -65,7 +65,7 @@ const page = () => {
 
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     setIsSubmitting(true)
-
+//manual authentication in sign-up and nextauth in sign-in
     try {
       const response = await axios.post<ApiResponse>('/api/sign-up', data)
       console.log("data", data)
@@ -74,7 +74,9 @@ const page = () => {
         description: response.data.message
       })
 
+      console.log("redirecting to:",`/verify/${username}`)
       router.replace(`/verify/${username}`)
+      
       setIsSubmitting(false)
 
     } catch (error) {
