@@ -43,7 +43,7 @@ const page = () => {
     const checkUsernameUnique = async () => {
       if (username) {
         setIsCheckingUsername(true)
-        setUsername('')
+        
 
         try {
           const response = await axios.get(`/api/check-unique-username?username=${username}`)
@@ -68,14 +68,14 @@ const page = () => {
 //manual authentication in sign-up and nextauth in sign-in
     try {
       const response = await axios.post<ApiResponse>('/api/sign-up', data)
-      console.log("data", data)
+      console.log("data", data, response)
 
       toast?.success("sucessfully get the response", {
         description: response.data.message
       })
 
-      console.log("redirecting to:",`/verify/${username}`)
-      router.replace(`/verify/${username}`)
+      console.log("redirecting to:",`/verify/${data.username}`)
+      router.replace(`/verify/${data.username}`)
       
       setIsSubmitting(false)
 
@@ -117,8 +117,10 @@ const page = () => {
                       }}
                       />
                     </FormControl>
+                      <div  className="flex items-center gap-2 mt-1">
                       {isCheckingUsername && <Loader2 className="h-5 w-5 animate-spin text-blue-500" />}
                       <p className={`text-sm ${usernameMessage === "available username" ? "text-green-500" : "text-red-300"} `}> {usernameMessage}</p>
+                      </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -133,6 +135,7 @@ const page = () => {
                     <FormControl>
                       <Input placeholder="email" {...field} 
                       />
+                     
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -154,22 +157,22 @@ const page = () => {
               />
 
 
-              <Button type="submit" disabled={isSubmitting}>
+              <Button className="w-full" type="submit" disabled={isSubmitting}>
                 {
                   isSubmitting ? (
                   <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin"/> 
                   Please wait
                   </>
-                  ) : ('Signup')
+                  ) : ('Sign up')
                 }
               </Button>
             </form>
 
           </Form>
 
-          <div>
-            <p>Already a Member ? (' ')
+          <div className="text-center mt-4">
+            <p>Already a Member? (' ')
               <Link href="/sign-in" className="text-blue-500 hover:text-blue-800">Sign in</Link>
             </p>
           </div>

@@ -21,20 +21,24 @@ const VerifyAccount = () => {
 
     const form = useForm<z.infer<typeof verifySchema>>({
         resolver: zodResolver(verifySchema),
+        defaultValues: {
+            code: "", 
+          }
     })
 
     const onSubmit = async (data: z.infer<typeof verifySchema>) => {
         try {
-            const response = await axios.post(`/api/verify-code`, {
+            const response = await axios.post(`/api/verify-code`,{
                 username: params.username,
-                code: data.code
-            })
+                code: data.code,
+              })
+              console.log("Sending to /api/verify-code:",  data.code, params.username,response )
 
             toast("success", {
                 description: response.data.message
             })
 
-            router.replace('sign-in')
+            router.replace('/sign-in')
         } catch (error) {
             console.log("error in signup of user ", error)
             const axiosError = error as AxiosError<ApiResponse>
@@ -67,7 +71,7 @@ const VerifyAccount = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button className='mx-auto block' type="submit">Submit</Button>
       </form>
     </Form>
                 </div>

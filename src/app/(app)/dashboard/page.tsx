@@ -24,9 +24,10 @@ const page = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSwitchLoading , setIsSwitchLoading] = useState(false)
 
-  const handleDeleteMessage = (messageId : string) => {
-    setMessages(messages.filter((message) => message._id !== messageId ))
-  }
+  const handleDeleteMessage = (messageId: string) => {
+    setMessages(messages.filter((message) => message._id !== messageId));
+  };
+
 
   const {data: session} = useSession()
 
@@ -50,7 +51,7 @@ const page = () => {
         description: "Failed to fetch message setting"
       })
     }finally{
-      setIsLoading(false)
+      setIsSwitchLoading(false)
     }
 
   },[setValue])
@@ -71,7 +72,7 @@ const page = () => {
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast("Error",{
-        description: "Failed to fetch message setting"
+        description: axiosError.response?.data.message ?? 'Failed to fetch messages',
       })
     }finally{
       setIsSwitchLoading(false)
@@ -100,13 +101,14 @@ const page = () => {
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast("Error",{
-        description: "Failed to fetch message setting"
+        description:  axiosError.response?.data.message ??
+        'Failed to update message settings',
       })
     }
   }
 
   //copy to clipboard
-  const {username} = session?.user as User;
+  const username = (session?.user as User)?.username
 
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
@@ -173,10 +175,10 @@ const page = () => {
         {messages.length > 0 ? (
           messages.map((message, index) => (
             <MessageCard
-              key={message._id}
-              message={message}
-              onMessageDelete={handleDeleteMessage}
-            />
+            key={message._id}
+            message={message}
+            onMessageDelete={handleDeleteMessage}
+          />
           ))
         ) : (
           <p>No messages to display.</p>

@@ -7,6 +7,14 @@ export async function POST(request: Request) {
     try {
         const {username, code} = await request.json()
 
+        if (!username || !code) {
+            return Response.json({
+              success: false,
+              message: "Missing username or code"
+            }, { status: 400 });
+          }
+          
+
         //inbuilt method decodeURIComponent
         const decodeUsername = decodeURIComponent(username)
 
