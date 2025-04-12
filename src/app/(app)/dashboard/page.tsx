@@ -48,7 +48,7 @@ const Page = () => {
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast("Error",{
-        description: "Failed to fetch message setting"
+        description: axiosError.response?.data.message  || "Failed to fetch message setting"
       })
     }finally{
       setIsSwitchLoading(false)

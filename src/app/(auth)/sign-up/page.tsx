@@ -79,10 +79,10 @@ const Page = () => {
       
       setIsSubmitting(false)
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.log("error in signup of user ", error)
       const axiosError = error as AxiosError<ApiResponse>
-      let errorMessage = axiosError.response?.data.message
+      const errorMessage = axiosError.response?.data.message
       toast("Signup failed", {
         description: errorMessage,
       })
@@ -172,7 +172,7 @@ const Page = () => {
           </Form>
 
           <div className="text-center mt-4">
-            <p>Already a Member? (' ');
+            <p>Already a Member?{' '};
               <Link href="/sign-in" className="text-blue-500 hover:text-blue-800">Sign in</Link>
             </p>
           </div>

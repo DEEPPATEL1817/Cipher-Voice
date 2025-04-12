@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         const isCodeNotExp = new Date(user.verifyCodeExp) >  new Date() 
 
         if (isCodeValid && isCodeNotExp) {
-            user.isVerified = true,
+            user.isVerified = true;
             await user.save()
 
             return Response.json({
