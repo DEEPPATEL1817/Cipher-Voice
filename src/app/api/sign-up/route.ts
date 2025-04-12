@@ -90,8 +90,8 @@ export async function POST(request: Request) {
             message:"User registered successfully.please verify your email"
         },{status: 201})
 
-    } catch (error: any) {
-        console.error("error regestering user", error)
+    } catch (error: unknown) {
+        console.error("error registering user", error)
         return Response.json(
             {
                 success: false,
