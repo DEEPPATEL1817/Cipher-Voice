@@ -25,7 +25,7 @@ const Home = () => {
 
       <Carousel
       plugins={[Autoplay({delay:2000})]}
-       className="w-full max-w-xs" >
+       className="w-full max-w-xs " >
       <CarouselContent>
         {
           messages.map((messages,index)=>(
@@ -44,8 +44,8 @@ const Home = () => {
           ))
         }
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className='text-gray-500' />
+      <CarouselNext className='text-gray-500' />
     </Carousel>
     </main>
     <footer className='text-center p-4 md:p-6'>@ 2025 Cipher Voice. All rights reserved</footer>

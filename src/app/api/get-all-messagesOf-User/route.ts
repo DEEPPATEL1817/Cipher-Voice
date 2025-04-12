@@ -26,7 +26,7 @@ export async function GET(request : Request) {
         //we are using aggregation pipeline for user messages 
 
         const user = await UserModel.aggregate([
-            { $match: {id: userId } },
+            { $match: {_id: userId } },
             //unwindding array 
 
             {$unwind: '$messages'},

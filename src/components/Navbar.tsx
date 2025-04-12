@@ -24,7 +24,7 @@ const Navbar = () => {
                 </>
             ) : (
                 <Link href={'/sign-in'}>
-                <Button className='w-full md:w-auto'>Login</Button>
+                <Button className='w-full md:w-auto hover:bg-gray-600 cursor-pointer'>Login</Button>
                 </Link>
             )
         }

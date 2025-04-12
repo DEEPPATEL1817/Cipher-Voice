@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -9,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
-import { useCompletion } from 'ai/react';
+import { useCompletion } from '@ai-sdk/react';
 import {
   Form,
   FormControl,
@@ -19,10 +18,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
 import * as z from 'zod';
 import { ApiResponse } from '@/types/ApiResponse';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { messageSchema } from '@/schemas/messageSchema';
 
@@ -40,12 +39,12 @@ export default function SendMessage() {
   const username = params.username;
 
   const {
-    complete,
     completion,
+    complete,
     isLoading: isSuggestLoading,
     error,
   } = useCompletion({
-    api: '/api/suggest-messages',
+    api: '/api/suggest-messages-through-openAI',
     initialCompletion: initialMessageString,
   });
 
@@ -64,17 +63,16 @@ export default function SendMessage() {
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsLoading(true);
     try {
-      const response = await axios.post<ApiResponse>('/api/send-message', {
+      const response = await axios.post<ApiResponse>('/api/user-send-messages', {
         ...data,
         username,
       });
 
       toast(response.data.message);
-
       form.reset({ ...form.getValues(), content: '' });
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast("Error",{
+      toast("Error", {
         description:
           axiosError.response?.data.message ?? 'Failed to sent message',
       });
@@ -85,12 +83,10 @@ export default function SendMessage() {
 
   const fetchSuggestedMessages = async () => {
     try {
-      complete('');
+      await complete('');
     } catch (error) {
       console.error('Error fetching messages:', error);
-      toast("Error",{
-        description: 'Fail to suggest message'
-      })
+      toast.error('Failed to load suggestions. Please try again.');
     }
   };
 
@@ -140,6 +136,9 @@ export default function SendMessage() {
             className="my-4"
             disabled={isSuggestLoading}
           >
+            {isSuggestLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : null}
             Suggest Messages
           </Button>
           <p>Click on any message below to select it.</p>
@@ -150,7 +149,9 @@ export default function SendMessage() {
           </CardHeader>
           <CardContent className="flex flex-col space-y-4">
             {error ? (
-              <p className="text-red-500">{error.message}</p>
+              <p className="text-red-500">
+                {error.message || 'Error loading suggestions. Please try again.'}
+              </p>
             ) : (
               parseStringMessages(completion).map((message, index) => (
                 <Button

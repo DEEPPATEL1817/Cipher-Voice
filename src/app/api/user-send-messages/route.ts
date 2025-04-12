@@ -8,6 +8,8 @@ export async function POST(request: Request){
     const {username, content} = await request.json()
 
     try {
+        console.log("Received username:", username);
+
         const user = await UserModel.findOne({username})
 
         if (!user) {
