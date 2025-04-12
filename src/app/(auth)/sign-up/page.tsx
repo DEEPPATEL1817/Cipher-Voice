@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react";
 
-const page = () => {
+const Page = () => {
   const [username, setUsername] = useState('')
   //to check username available or not 
   const [usernameMessage, setUsernameMessage] = useState('')
@@ -47,7 +47,7 @@ const page = () => {
 
         try {
           const response = await axios.get(`/api/check-unique-username?username=${username}`)
-          let message = response.data.message
+          const message = response.data.message
           console.log("message :" , message)
           setUsernameMessage(message)
         } catch (error) {
@@ -172,7 +172,7 @@ const page = () => {
           </Form>
 
           <div className="text-center mt-4">
-            <p>Already a Member? (' ')
+            <p>Already a Member? (' ');
               <Link href="/sign-in" className="text-blue-500 hover:text-blue-800">Sign in</Link>
             </p>
           </div>
@@ -183,4 +183,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

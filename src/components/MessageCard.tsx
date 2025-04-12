@@ -1,6 +1,6 @@
 import React from 'react'
 import dayjs from 'dayjs'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
+import { Card, CardHeader, CardTitle } from './ui/card'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,7 +29,9 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
   const handleDeleteConfirm = async () => {
     const response = await axios.delete<ApiResponse>(`/api/delete-message/${message._id}`)
 
-    toast("Message Deleted successfully"),
+    toast("Message Deleted successfully",{
+      description: response.data.message
+    }),
       onMessageDelete(message._id)
   }
 

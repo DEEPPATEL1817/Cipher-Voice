@@ -3,21 +3,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import Link from "next/link"
-import { useEffect, useState } from "react"
-import axios, { AxiosError } from 'axios'
-import { useDebounceCallback } from 'usehooks-ts'
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { signUpSchema } from "@/schemas/signUpSchema"
-import { ApiResponse } from "@/types/ApiResponse"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react";
 import { signInSchema } from "@/schemas/signInSchema"
 import { signIn } from "next-auth/react"
 
-const page = () => {
+const Page = () => {
 
   const router = useRouter()
 
@@ -113,4 +107,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
