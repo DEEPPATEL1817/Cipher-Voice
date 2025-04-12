@@ -26,19 +26,19 @@ export async function POST(request: Request) {
 
         const verifyCode = Math.floor(10000 + Math.random() * 90000).toString()
 
-//if user is exist with email id
+        //if user is exist with email id
         if ((existingUserByEmail)) {
-//if user is there with email id and/but he is verified too        
-            if(existingUserByEmail.isVerified){
+            //if user is there with email id and/but he is verified too        
+            if (existingUserByEmail.isVerified) {
                 return Response.json({
                     success: false,
                     message: "user already exist with this email"
                 }, { status: 400 })
             }
-//if user is there but not verified so update it..may user update his password .and now we have to send verification code 
-            else{
-                const hashPassword = await bcrypt.hash(password,10);
-                
+            //if user is there but not verified so update it..may user update his password .and now we have to send verification code 
+            else {
+                const hashPassword = await bcrypt.hash(password, 10);
+
                 existingUserByEmail.password = hashPassword;
 
                 existingUserByEmail.verifyCode = verifyCode;
@@ -46,16 +46,16 @@ export async function POST(request: Request) {
                 existingUserByEmail.verifyCodeExp = new Date(Date.now() + 3600000)
 
                 await existingUserByEmail.save()
-                
+
             }
-//if user is not exit with email id 
+            //if user is not exit with email id 
         } else {
             const hashedPassword = await bcrypt.hash(password, 10)
 
             const expiryDate = new Date()
             expiryDate.setHours(expiryDate.getHours() + 1)
 
-           const newUser = new UserModel({
+            const newUser = new UserModel({
                 username,
                 email,
                 password: hashedPassword,
@@ -71,32 +71,40 @@ export async function POST(request: Request) {
 
         //send verification email 
 
-       const emailResponse = await sendVerificationEmail(
+        const emailResponse = await sendVerificationEmail(
             email,
             username,
             verifyCode
         )
-        console.log("emailResponse: ",emailResponse)
+        console.log("emailResponse: ", emailResponse)
 
-        if(!emailResponse.success){
+        if (!emailResponse.success) {
             return Response.json({
-                success:false,
-                message:emailResponse.message
-            },{status: 500})
+                success: false,
+                message: emailResponse.message
+            }, { status: 500 })
         }
 
         return Response.json({
-            success:true,
-            message:"User registered successfully.please verify your email"
-        },{status: 201})
+            success: true,
+            message: "User registered successfully.please verify your email"
+        }, { status: 201 })
 
     } catch (error: unknown) {
-        console.error("error registering user", error)
-        return Response.json(
-            {
+        if (error instanceof Error) {
+            console.error("error registering user:", error.message)
+            return Response.json({
+                success:false,
+                message: "error regiestering user"
+            },{status: 500})
+        } else {
+            console.error("error registering user:", error)
+            return Response.json({
                 success: false,
-                message: "error registering user"
-            }, { status: 500 }
-        )
+                message: "An unknown error occurred"
+            }, { status: 500 });
+        }
     }
 }
+
+

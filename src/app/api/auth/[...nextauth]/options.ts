@@ -5,17 +5,21 @@ import dbConnect from "@/lib/dbConnection";
 import UserModel from "@/models/user";
 
 
+  
 //next auth is using for authentication in which credentials is used ..here just we can add github ,facebook anything in providers
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
             id: "credentials",
             name: "credentials",
+
+            
             credentials: {
                 email: { label: "Email", type: "text", placeholder: "Email" },
                 password: { label: "Password", type: "password", placeholder: "********" }
             },
-            async authorize(credentials: any): Promise<any> {
+            
+            async authorize(credentials : any): Promise<any> {
                 await dbConnect()
                 try {
                     const user = await UserModel.findOne({
