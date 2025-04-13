@@ -7,8 +7,8 @@ import { NextResponse ,NextRequest} from 'next/server';
 
 
 
-export async function DELETE(request : NextRequest , {params}: {params:{messageid: string}}): Promise<NextResponse> {
-    const { messageid } = params;
+export async function DELETE(request : NextRequest , context: { params: { messageid: string } }): Promise<NextResponse> {
+    const { messageid } = context.params;
 
     await dbConnect()
     const session = await getServerSession(authOptions)
