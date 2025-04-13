@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions ,RequestInternal } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from 'bcrypt'
 import dbConnect from "@/lib/dbConnection";
@@ -89,6 +89,7 @@ import UserModel from "@/models/user";
 // }
 
 
+
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -105,7 +106,7 @@ export const authOptions: NextAuthOptions = {
                     type: "password" 
                 }
             },
-            async authorize(credentials) {
+            async authorize(credentials: Record<"identifier" | "password", string> | undefined, req: Pick<RequestInternal, "body" | "query" | "headers" | "method">):Promise<any> {
                 await dbConnect();
                 
                 if (!credentials?.identifier || !credentials.password) {
@@ -134,7 +135,7 @@ export const authOptions: NextAuthOptions = {
                     if (!isValidPassword) return null;
 
                     return {
-                        _id: user._id,
+                        _id: user._id, 
                         email: user.email,
                         username: user.username,
                         isVerified: user.isVerified,
@@ -179,8 +180,6 @@ export const authOptions: NextAuthOptions = {
     },
     session: {
         strategy: "jwt",
-        
     },
     secret: process.env.NEXTAUTH_SECRET,
-    
 };
