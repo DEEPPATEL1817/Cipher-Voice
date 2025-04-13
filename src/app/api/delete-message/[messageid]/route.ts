@@ -7,7 +7,7 @@ import { NextResponse ,NextRequest} from 'next/server';
 
 
 
-export async function DELETE(request : NextRequest , {params}: {params:{messageid: string}}) {
+export async function DELETE(request : NextRequest , {params}: {params:{messageid: string}}): Promise<NextResponse> {
     const { messageid } = params;
 
     await dbConnect()
@@ -27,7 +27,7 @@ export async function DELETE(request : NextRequest , {params}: {params:{messagei
             {_id: user._id},
             {$pull: {messages: {_id: messageid}}}
         )
-        if (updateResult.modifiedCount == 0) {
+        if (updateResult.modifiedCount === 0) {
             return NextResponse.json({
                 success:false,
                 message: "Message not found or already Deleted"
