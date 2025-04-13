@@ -5,10 +5,14 @@ import UserModel from "@/models/user";
 import { User } from "next-auth";
 import { NextResponse ,NextRequest} from 'next/server';
 
+type Context = {
+    params: {
+      messageid: string;
+    };
+  };
 
-
-export async function DELETE(request : NextRequest , {params}: {params:{messageid: string}}) {
-    const messageid = params.messageid
+export async function DELETE(request : NextRequest , context: Context) {
+    const { messageid } = context.params;
     await dbConnect()
     const session = await getServerSession(authOptions)
     //here User is a type of user
