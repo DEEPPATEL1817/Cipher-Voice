@@ -106,7 +106,7 @@ export const authOptions: NextAuthOptions = {
                     type: "password" 
                 }
             },
-            async authorize(credentials: Record<"identifier" | "password", string> | undefined, req: Pick<RequestInternal, "body" | "query" | "headers" | "method">):Promise<any> {
+            async authorize(credentials: Record<"identifier" | "password", string> | undefined, _req: Pick<RequestInternal, "body" | "query" | "headers" | "method">):Promise<any> {
                 await dbConnect();
                 
                 if (!credentials?.identifier || !credentials.password) {
