@@ -108,7 +108,7 @@ const Page = () => {
   }
 
   //copy to clipboard
-  const username = (session?.user as User)?.username
+  const username = (session?.user as unknown as User)?.username
 
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
