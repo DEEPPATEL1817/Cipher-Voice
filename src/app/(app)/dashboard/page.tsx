@@ -24,6 +24,8 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSwitchLoading , setIsSwitchLoading] = useState(false)
 
+  const [profileUrl, setProfileUrl] = useState('');
+
   const handleDeleteMessage = (messageId: string) => {
     setMessages(messages.filter((message) => message._id !== messageId));
   };
@@ -110,14 +112,19 @@ const Page = () => {
   //copy to clipboard
   const username = (session?.user as unknown as User)?.username
 
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  useEffect(() => {
+    if (typeof window !== 'undefined' && username) {
+      const baseUrl = `${window.location.protocol}//${window.location.host}`;
+      setProfileUrl(`${baseUrl}/u/${username}`);
+    }
+  }, [username]);
 
-  const profileUrl = `${baseUrl}/u/${username}`;
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(profileUrl)
-    toast("Profile URL is copied");
-  }
+  if (!profileUrl) return;
+  navigator.clipboard.writeText(profileUrl);
+  toast("Profile URL is copied");
+};
 
   if(!session || !session.user){
     return (
