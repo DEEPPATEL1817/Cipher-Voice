@@ -1,4 +1,4 @@
-import { NextAuthOptions  } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from 'bcrypt'
 import dbConnect from "@/lib/dbConnection";
@@ -90,6 +90,7 @@ import UserModel from "@/models/user";
 
 
 
+  
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -107,8 +108,8 @@ export const authOptions: NextAuthOptions = {
                 }
             },
             async authorize(
-                credentials: any
-              ):Promise<any> {
+                credentials: Record<"identifier" | "password", string> | undefined
+              ):Promise<User | null> {
                 await dbConnect();
                 
                 if (!credentials?.identifier || !credentials.password) {
@@ -142,7 +143,7 @@ export const authOptions: NextAuthOptions = {
                         username: user.username,
                         isVerified: user.isVerified,
                         isAcceptingMessages: user.isAcceptingMessage
-                    };
+                    } as User;
                 } catch (error) {
                     console.error('Authentication Error:', error);
                     if (error instanceof Error) {
@@ -159,7 +160,7 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token._id = user._id;
-                token.email = user.email;
+                token.email = user.email as string;
                 token.username = user.username;
                 token.isVerified = user.isVerified;
                 token.isAcceptingMessages = user.isAcceptingMessages;
