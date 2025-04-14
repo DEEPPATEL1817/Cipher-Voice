@@ -107,7 +107,7 @@ export const authOptions: NextAuthOptions = {
                 }
             },
             async authorize(
-                credentials: Record<"identifier" | "password", string> | undefined
+                credentials: any
               ):Promise<any> {
                 await dbConnect();
                 
