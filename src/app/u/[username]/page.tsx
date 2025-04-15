@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -8,7 +8,6 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
-import { useCompletion } from '@ai-sdk/react';
 import {
   Form,
   FormControl,
@@ -38,15 +37,14 @@ export default function SendMessage() {
   const params = useParams<{ username: string }>();
   const username = params.username;
 
-  const {
-    completion,
-    complete,
-    isLoading: isSuggestLoading,
-    error,
-  } = useCompletion({
-    api: '/api/suggest-messages-through-openAI',
-    initialCompletion: initialMessageString,
-  });
+  const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
+  const [isSuggestLoading, setIsSuggestLoading] = useState(false);
+  const [suggestError, setSuggestError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Set default messages on load
+    setSuggestedMessages(parseStringMessages(initialMessageString));
+  }, []);
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -74,7 +72,7 @@ export default function SendMessage() {
       const axiosError = error as AxiosError<ApiResponse>;
       toast("Error", {
         description:
-          axiosError.response?.data.message ?? 'Failed to sent message',
+          axiosError.response?.data.message ?? 'Failed to send message',
       });
     } finally {
       setIsLoading(false);
@@ -83,10 +81,23 @@ export default function SendMessage() {
 
   const fetchSuggestedMessages = async () => {
     try {
-      await complete('');
-    } catch (error) {
+      setIsSuggestLoading(true);
+      setSuggestError(null);
+
+      const response = await axios.post('/api/suggest-messages-through-openAI');
+      const data = response.data.completion;
+
+      const messages: string[] = Array.isArray(data)
+        ? data
+        : parseStringMessages(data);
+
+      setSuggestedMessages(messages);
+    } catch (error: any) {
       console.error('Error fetching messages:', error);
+      setSuggestError('Failed to load suggestions. Please try again.');
       toast.error('Failed to load suggestions. Please try again.');
+    } finally {
+      setIsSuggestLoading(false);
     }
   };
 
@@ -95,6 +106,7 @@ export default function SendMessage() {
       <h1 className="text-4xl font-bold mb-6 text-center">
         Public Profile Link
       </h1>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -148,12 +160,10 @@ export default function SendMessage() {
             <h3 className="text-xl font-semibold">Messages</h3>
           </CardHeader>
           <CardContent className="flex flex-col space-y-4">
-            {error ? (
-              <p className="text-red-500">
-                {error.message || 'Error loading suggestions. Please try again.'}
-              </p>
+            {suggestError ? (
+              <p className="text-red-500">{suggestError}</p>
             ) : (
-              parseStringMessages(completion).map((message, index) => (
+              suggestedMessages.map((message, index) => (
                 <Button
                   key={index}
                   variant="outline"
@@ -167,6 +177,7 @@ export default function SendMessage() {
           </CardContent>
         </Card>
       </div>
+
       <Separator className="my-6" />
       <div className="text-center">
         <div className="mb-4">Get Your Message Board</div>

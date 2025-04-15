@@ -52,8 +52,8 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                your message from our website.
+                This action cannot be undone. This will permanently delete 
+                your message.
               </AlertDialogDescription>
             </AlertDialogHeader>
 
