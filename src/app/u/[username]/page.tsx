@@ -92,7 +92,7 @@ export default function SendMessage() {
         : parseStringMessages(data);
 
       setSuggestedMessages(messages);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching messages:', error);
       setSuggestError('Failed to load suggestions. Please try again.');
       toast.error('Failed to load suggestions. Please try again.');
