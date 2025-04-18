@@ -5,7 +5,7 @@ import * as z from "zod"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import axios, { AxiosError } from 'axios'
-import {  useDebounceCallback} from 'usehooks-ts'
+import { useDebounceCallback } from 'usehooks-ts'
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { signUpSchema } from "@/schemas/signUpSchema"
@@ -13,7 +13,8 @@ import { ApiResponse } from "@/types/ApiResponse"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react";
+import { Loader2, LucideGithub } from "lucide-react";
+import { signIn } from "next-auth/react"
 
 const Page = () => {
   const [username, setUsername] = useState('')
@@ -22,7 +23,11 @@ const Page = () => {
   //  loader 
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const [isGithubSubmitting, setIsGithubSubmitting] = useState(false);
 
   const debounced = useDebounceCallback(setUsername, 500)
 
@@ -43,12 +48,12 @@ const Page = () => {
     const checkUsernameUnique = async () => {
       if (username) {
         setIsCheckingUsername(true)
-        
+
 
         try {
           const response = await axios.get(`/api/check-unique-username?username=${username}`)
           const message = response.data.message
-          console.log("message :" , message)
+          console.log("message :", message)
           setUsernameMessage(message)
         } catch (error) {
           const axiosError = error as AxiosError<ApiResponse>
@@ -64,8 +69,8 @@ const Page = () => {
   }, [username])
 
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
-    setIsSubmitting(true)
-//manual authentication in sign-up and nextauth in sign-in
+    setIsFormSubmitting(true);
+    //manual authentication in sign-up and nextauth in sign-in
     try {
       const response = await axios.post<ApiResponse>('/api/sign-up', data)
       console.log("data", data, response)
@@ -74,10 +79,10 @@ const Page = () => {
         description: response.data.message
       })
 
-      console.log("redirecting to:",`/verify/${data.username}`)
+      console.log("redirecting to:", `/verify/${data.username}`)
       router.replace(`/verify/${data.username}`)
-      
-      setIsSubmitting(false)
+
+      setIsFormSubmitting(false);
 
     } catch (error: unknown) {
       console.log("error in signup of user ", error)
@@ -86,10 +91,31 @@ const Page = () => {
       toast("Signup failed", {
         description: errorMessage,
       })
-      setIsSubmitting(false)
+      setIsFormSubmitting(false);
 
     }
   }
+
+  const handleGithubSignIn = async () => {
+    setIsGithubSubmitting(true);
+    try {
+      await signIn('github', { callbackUrl: '/sign-in' })
+    } catch (error) {
+      toast.error("Failed to sign in with GitHub")
+      console.error("GitHub sign-in error:", error)
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleSubmitting(true);
+    try {
+      await signIn('google', { callbackUrl: '/sign-in' })
+    } catch (error) {
+      toast.error("Failed to sign in with Google")
+      console.error("Google sign-in error:", error)
+    }
+  }
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-200">
@@ -98,6 +124,8 @@ const Page = () => {
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">Join Cipher Voice</h1>
           <p className="mb-4">Sign-up </p>
         </div>
+
+
 
         <div>
           <Form {...form}>
@@ -110,17 +138,17 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="username" {...field} 
-                      onChange={(e) => {
-                        field.onChange(e)
-                        debounced(e.target.value)
-                      }}
+                      <Input placeholder="username" {...field}
+                        onChange={(e) => {
+                          field.onChange(e)
+                          debounced(e.target.value)
+                        }}
                       />
                     </FormControl>
-                      <div  className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1">
                       {isCheckingUsername && <Loader2 className="h-5 w-5 animate-spin text-blue-500" />}
                       <p className={`text-sm ${usernameMessage === "available username" ? "text-green-500" : "text-red-300"} `}> {usernameMessage}</p>
-                      </div>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -133,23 +161,23 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="email" {...field} 
+                      <Input placeholder="email" {...field}
                       />
-                     
+
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-             <FormField
+              <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="password" {...field}/>
+                      <Input type="password" placeholder="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -157,19 +185,71 @@ const Page = () => {
               />
 
 
-              <Button className="w-full" type="submit" disabled={isSubmitting}>
+              <Button className="w-full" type="submit" disabled={isFormSubmitting}>
                 {
-                  isSubmitting ? (
-                  <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin"/> 
-                  Please wait
-                  </>
+                  isFormSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </>
                   ) : ('Sign up')
                 }
               </Button>
             </form>
 
           </Form>
+
+
+          <div className="flex items-center gap-4 my-4">
+            <div className="flex-grow h-px bg-gray-300" />
+            <span className="text-sm text-gray-500">or</span>
+            <div className="flex-grow h-px bg-gray-300" />
+          </div>
+
+
+          <div className="flex items-center justify-center mt-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2"
+              onClick={handleGoogleSignIn}
+              disabled={isGoogleSubmitting}
+            >
+              {
+                isGoogleSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="animate-spin h-4 w-4" />
+                    <span>Please wait</span>
+                  </div>
+                ) : (
+                  <>Google</>
+                )
+              }
+            </Button>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full flex items-center justify-center gap-2"
+            onClick={handleGithubSignIn}
+            disabled={isGithubSubmitting}
+          >
+            {isGithubSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Please wait</span>
+              </>
+            ) : (
+              <>
+                <LucideGithub className="w-4 h-4" />
+                <span>Sign up with GitHub</span>
+              </>
+            )}
+          </Button>
+
+
+
 
           <div className="text-center mt-4">
             <p>Already a Member?{' '}

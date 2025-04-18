@@ -10,9 +10,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { signInSchema } from "@/schemas/signInSchema"
 import { signIn } from "next-auth/react"
+import { useState } from "react"
+import { Loader2 } from "lucide-react"
 
 const Page = () => {
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
   //zod implimentation 
@@ -26,23 +29,35 @@ const Page = () => {
   })
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    //we are using next-auth for authentication
-    const result = await signIn('credentials', {
-      redirect: false,
-          identifier: data.identifier,
-          password: data.password
-    })
+    setIsSubmitting(true);
+    try {
+      //we are using next auth for authentication
+      const result = await signIn('credentials', {
+        redirect: false,
+        identifier: data.identifier,
+        password: data.password
+      });
 
-    if (result?.error) {
-      toast("login failed",{
-        description: "Incorrect username or password"
-      })
-    }
+      if (result?.error) {
+        toast.error("Login failed", {
+          description: "Incorrect username or password"
+        });
+        return;
+      }
 
-    if (result?.url) {
-      router.replace('/dashboard')
+      if (result?.url) {
+        router.replace('/dashboard');
+      }
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      toast.error("An error occurred", {
+        description: "Please try again later"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   }
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-200">
@@ -88,8 +103,15 @@ const Page = () => {
               />
 
 
-              <Button className="w-full text-white" type="submit">
-                Sign In
+              <Button className="w-full text-white" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <span>Please wait</span>
+                  </div>
+                ) : (
+                  'Sign in'
+                )}
               </Button>
             </form>
 

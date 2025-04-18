@@ -30,7 +30,7 @@ export async function GET() {
             //unwindding array 
 
             {$unwind: '$messages'},
-            {$sort : {'messages.cresatedAt': -1}},
+            {$sort : {'messages.createdAt': -1}},
             {$group: {_id: '$_id', messages: {$push : '$messages'}}}
         ])
 

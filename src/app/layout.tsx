@@ -4,6 +4,7 @@ import '@/app/globals.css'
 import AuthProvider from "@/context/authProvider";
 import { Toaster } from "@/components/ui/sonner"
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

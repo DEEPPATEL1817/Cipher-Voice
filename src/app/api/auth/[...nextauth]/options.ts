@@ -1,5 +1,7 @@
 import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import bcrypt from 'bcrypt'
 import dbConnect from "@/lib/dbConnection";
 import UserModel from "@/models/user";
@@ -12,12 +14,12 @@ import UserModel from "@/models/user";
 //             id: "credentials",
 //             name: "credentials",
 
-            
+
 //             credentials: {
 //                 email: { label: "Email", type: "text", placeholder: "Email" },
 //                 password: { label: "Password", type: "password", placeholder: "********" }
 //             },
-            
+
 //             async authorize(credentials: any): Promise<any> {
 //                 await dbConnect()
 //                 try {
@@ -56,7 +58,7 @@ import UserModel from "@/models/user";
 //         //here the user is came from providers 
 //         //and we are shifting data from user to token
 //         async jwt({ token, user }) {
-            
+
 //             if (user) {
 //                 //we are send this many data along with the token other wise we have to call db again
 //                 token._id = user._id?.toString();
@@ -90,7 +92,7 @@ import UserModel from "@/models/user";
 
 
 
-  
+
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -102,16 +104,16 @@ export const authOptions: NextAuthOptions = {
                     type: "text",
                     placeholder: "jsmith@example.com"
                 },
-                password: { 
-                    label: "Password", 
-                    type: "password" 
+                password: {
+                    label: "Password",
+                    type: "password"
                 }
             },
             async authorize(
                 credentials: Record<"identifier" | "password", string> | undefined
-              ):Promise<User | null> {
+            ): Promise<User | null> {
                 await dbConnect();
-                
+
                 if (!credentials?.identifier || !credentials.password) {
                     return null;
                 };
@@ -138,7 +140,7 @@ export const authOptions: NextAuthOptions = {
                     if (!isValidPassword) return null;
 
                     return {
-                        _id: user._id, 
+                        _id: user._id,
                         email: user.email,
                         username: user.username,
                         isVerified: user.isVerified,
@@ -154,8 +156,19 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
             }
+        }),
+        GitHubProvider({
+            clientId: process.env.GITHUB_ID as string,
+            clientSecret: process.env.GITHUB_SECRET as string
+        }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
         })
     ],
+
+    //extracting info from github and google is remaining the below callback is info of user abstraction manually 
+
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
