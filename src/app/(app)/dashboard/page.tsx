@@ -12,9 +12,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import axios, { AxiosError } from "axios"
 import { Loader2, RefreshCcw } from "lucide-react"
 import { useSession } from "next-auth/react"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useRef} from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+
 
 
 
@@ -22,22 +23,26 @@ import { toast } from "sonner"
 const Page = () => {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [isSwitchLoading , setIsSwitchLoading] = useState(false)
+  const [isSwitchLoading, setIsSwitchLoading] = useState(false)
 
   const [profileUrl, setProfileUrl] = useState('');
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isCopied, setIsCopied] = useState(false);
+
 
   const handleDeleteMessage = (messageId: string) => {
     setMessages(messages.filter((message) => message._id !== messageId));
   };
 
 
-  const {data: session} = useSession()
+  const { data: session } = useSession()
 
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema)
   })
 
-  const {register , watch , setValue} = form
+  const { register, watch, setValue } = form
 
   const acceptMessages = watch('acceptMessages')
 
@@ -49,16 +54,16 @@ const Page = () => {
       setValue('acceptMessages', response.data.isAcceptingMessage)
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast("Error",{
-        description: axiosError.response?.data.message  || "Failed to fetch message setting"
+      toast("Error", {
+        description: axiosError.response?.data.message || "Failed to fetch message setting"
       })
-    }finally{
+    } finally {
       setIsSwitchLoading(false)
     }
 
-  },[setValue])
+  }, [setValue])
 
-  const fetchMessages = useCallback( async (refresh: boolean = false )=>{
+  const fetchMessages = useCallback(async (refresh: boolean = false) => {
     setIsLoading(true)
     setIsSwitchLoading(false)
 
@@ -67,44 +72,44 @@ const Page = () => {
       setMessages(response.data.messages || [])
 
       if (refresh) {
-        
+
         toast("Showing Latest messages")
       }
 
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast("Error",{
+      toast("Error", {
         description: axiosError.response?.data.message ?? 'Failed to fetch messages',
       })
-    }finally{
+    } finally {
       setIsSwitchLoading(false)
       setIsLoading(false)
     }
-  },[setIsLoading, setMessages])
+  }, [setIsLoading, setMessages])
 
 
   useEffect(() => {
-    if (!session || !session.user) return 
+    if (!session || !session.user) return
     fetchMessages()
     fetchAcceptMessage()
-  },[session,setValue,fetchAcceptMessage,fetchMessages])
+  }, [session, setValue, fetchAcceptMessage, fetchMessages])
 
   //handle switch change 
 
-  const handleSwitchChange = async() => {
+  const handleSwitchChange = async () => {
     try {
-      const response = await axios.post<ApiResponse>('/api/accept-messages',{
+      const response = await axios.post<ApiResponse>('/api/accept-messages', {
         acceptMessages: !acceptMessages
       })
-      setValue('acceptMessages' , !acceptMessages)
+      setValue('acceptMessages', !acceptMessages)
 
       toast(response.data.message)
 
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast("Error",{
-        description:  axiosError.response?.data.message ??
-        'Failed to update message settings',
+      toast("Error", {
+        description: axiosError.response?.data.message ??
+          'Failed to update message settings',
       })
     }
   }
@@ -121,18 +126,35 @@ const Page = () => {
 
 
   const copyToClipboard = () => {
-  if (!profileUrl) return;
-  navigator.clipboard.writeText(profileUrl);
-  toast("Profile URL is copied");
-};
+    if (!profileUrl) return;
 
-  if(!session || !session.user){
+    if (inputRef.current) {
+      inputRef.current.select(); // Select text
+    }
+    navigator.clipboard.writeText(profileUrl);
+    setIsCopied(true);
+    
+
+    if (inputRef.current) {
+      inputRef.current.setSelectionRange(0, profileUrl.length);
+    }
+
+    setTimeout(() => {
+      setIsCopied(false);
+      
+    }, 1000);
+
+    toast("Profile URL is copied");
+  };
+
+  if (!session || !session.user) {
     return (
       <div>
         Please Login
       </div>
     )
   }
+
 
   return (
     <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
@@ -142,10 +164,13 @@ const Page = () => {
         <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
         <div className="flex items-center">
           <input
+           ref={inputRef}
             type="text"
             value={profileUrl}
             disabled
-            className="input input-bordered w-full p-2 mr-2"
+            className={`input input-bordered w-full p-2 mr-2 transition-all duration-300 ${
+              isCopied ? "bg-blue-100" : ""
+            }`}
           />
           <Button onClick={copyToClipboard}>Copy</Button>
         </div>
@@ -182,10 +207,10 @@ const Page = () => {
         {messages.length > 0 ? (
           messages.map((message) => (
             <MessageCard
-            key={message._id}
-            message={message}
-            onMessageDelete={handleDeleteMessage}
-          />
+              key={message._id}
+              message={message}
+              onMessageDelete={handleDeleteMessage}
+            />
           ))
         ) : (
           <p>No messages to display.</p>

@@ -118,11 +118,11 @@ const Page = () => {
 
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-200">
+    <div className="flex justify-center items-center min-h-screen bg-[#232429]">
       <div className="w-full max-w-md   p-8 space-y-8 bg-white-rounded-lg shadow-md">
         <div className=" text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">Join Cipher Voice</h1>
-          <p className="mb-4">Sign-up </p>
+          <h1 className="text-4xl font-extrabold tracking-tight text-white lg:text-5xl mb-6">Join Cipher Voice</h1>
+          <p className="mb-4 text-white">Sign-up </p>
         </div>
 
 
@@ -136,7 +136,7 @@ const Page = () => {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel className="text-white">Username</FormLabel>
                     <FormControl>
                       <Input placeholder="username" {...field}
                         onChange={(e) => {
@@ -159,9 +159,9 @@ const Page = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="email" {...field}
+                      <Input className="text-white" placeholder="email" {...field}
                       />
 
                     </FormControl>
@@ -175,9 +175,9 @@ const Page = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-white">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="password" {...field} />
+                      <Input className="text-white" type="password" placeholder="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -185,7 +185,7 @@ const Page = () => {
               />
 
 
-              <Button className="w-full" type="submit" disabled={isFormSubmitting}>
+              <Button className="w-full bg-amber-400 hover:bg-amber-400 hover:-translate-y-0.5" type="submit" disabled={isFormSubmitting}>
                 {
                   isFormSubmitting ? (
                     <>
@@ -231,7 +231,7 @@ const Page = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full flex items-center justify-center gap-2"
+            className="w-full flex items-center justify-center gap-2 mt-2"
             onClick={handleGithubSignIn}
             disabled={isGithubSubmitting}
           >
@@ -251,7 +251,7 @@ const Page = () => {
 
 
 
-          <div className="text-center mt-4">
+          <div className="text-center mt-4 text-white">
             <p>Already a Member?{' '}
               <Link href="/sign-in" className="text-blue-500 hover:text-blue-800">Sign in</Link>
             </p>

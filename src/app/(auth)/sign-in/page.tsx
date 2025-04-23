@@ -60,10 +60,10 @@ const Page = () => {
 
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-200">
-      <div className="w-full max-w-md   p-8 space-y-8 bg-white-rounded-lg shadow-md">
+    <div className="flex justify-center items-center min-h-screen bg-[#232429]">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white-rounded-lg shadow-md">
         <div className=" text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">Join Cipher Voice</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6 text-white">Join Cipher Voice</h1>
           <p className="mb-4">Sign-in </p>
         </div>
 
@@ -78,9 +78,9 @@ const Page = () => {
                 name="identifier"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email / Username</FormLabel>
+                    <FormLabel className="text-white">Email / Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="email / username" {...field}
+                      <Input className="text-white" placeholder="email / username" {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -93,9 +93,9 @@ const Page = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-white">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="password" {...field} />
+                      <Input className="text-white" type="password" placeholder="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -103,7 +103,7 @@ const Page = () => {
               />
 
 
-              <Button className="w-full text-white" type="submit" disabled={isSubmitting}>
+              <Button className="w-full bg-amber-400 text-white" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <div className="flex items-center justify-center">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -118,8 +118,8 @@ const Page = () => {
           </Form>
 
           <div className="text-center mt-4">
-            <p>Already a Member?{' '}
-              <Link href="/sign-up" className="text-blue-500 hover:text-blue-800">Sign up</Link>
+            <p className="text-white">Already a Member?{' '}
+              <Link href="/sign-up" className="text-blue-500 hover:text-blue-800 ">Sign up</Link>
             </p>
           </div>
         </div>
