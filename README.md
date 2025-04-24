@@ -1,5 +1,8 @@
 link: https://cipher-voice.vercel.app/
 
+Demo email : wopak28752@bariswc.com
+Demo password : 1234567890
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
