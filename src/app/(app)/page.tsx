@@ -22,16 +22,16 @@ const Home = () => {
           <h1 className="text-3xl md:text-5xl font-extrabold drop-shadow-sm">
             Let Your Words Speak, Not Your Identity.
           </h1>
-          <p className="mt-3 md:mt-5 text-lg md:text-xl text-gray-300">"An anonymous space to give feedback or suggestions to anyone."
+          <p className="mt-3 md:mt-5 text-lg md:text-xl text-gray-300">An anonymous space to give feedback or suggestions to anyone.
 
           </p>
         </section>
 
         <div className="flex flex-col-reverse md:flex-row justify-between items-center gap-10">
           <div className="left md:w-1/2">
-            <p className="flex items-center gap-2"><Check /> Truth hits harder when it's anonymous.</p>
+            <p className="flex items-center gap-2"><Check /> {`Truth hits harder when it's anonymous.`}</p>
             <p className="flex items-center gap-2 text-seagreen"><Check /> No egos. No names. Just raw, honest feedback.</p>
-            <p className="flex items-center gap-2"><Check /> Because real change starts with what's real.</p>
+            <p className="flex items-center gap-2"><Check /> {`Because real change starts with what's real.`}</p>
           </div>
           <div className="right md:w-1/2 flex justify-center">
             <Image
