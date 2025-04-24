@@ -211,7 +211,7 @@ const Page = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full flex items-center justify-center gap-2"
+              className="w-full flex items-center justify-center gap-2 cursor-pointer"
               onClick={handleGoogleSignIn}
               disabled={isGoogleSubmitting}
             >
@@ -231,7 +231,7 @@ const Page = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full flex items-center justify-center gap-2 mt-2"
+            className="w-full flex items-center justify-center gap-2 mt-2 cursor-pointer"
             onClick={handleGithubSignIn}
             disabled={isGithubSubmitting}
           >

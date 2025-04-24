@@ -118,7 +118,7 @@ const Page = () => {
           </Form>
 
           <div className="text-center mt-4">
-            <p className="text-white">Already a Member?{' '}
+            <p className="text-white">Not a member yet ?{' '}
               <Link href="/sign-up" className="text-blue-500 hover:text-blue-800 ">Sign up</Link>
             </p>
           </div>
