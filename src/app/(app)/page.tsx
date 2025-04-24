@@ -9,9 +9,17 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image';
 import messages from '@/messages.json'
+import FAQ from '@/FAQ.json'
 import { Check } from 'lucide-react';
 
 const Home = () => {
@@ -27,7 +35,7 @@ const Home = () => {
           </p>
         </section>
 
-        <div className="flex flex-col-reverse md:flex-row justify-between items-center gap-10">
+        <div className="flex flex-col-reverse md:flex-row justify-between items-center gap-16">
           <div className="left md:w-1/2">
             <p className="flex items-center gap-2"><Check /> {`Truth hits harder when it's anonymous.`}</p>
             <p className="flex items-center gap-2 text-seagreen"><Check /> No egos. No names. Just raw, honest feedback.</p>
@@ -70,6 +78,15 @@ const Home = () => {
           <CarouselNext className='text-gray-500' />
         </Carousel>
 
+
+        <Accordion type="single" collapsible className="w-full mt-10 md:w-96">
+          {FAQ.map((faq, index) => (
+            <AccordionItem key={index} value={`item-${index}`}>
+              <AccordionTrigger>{faq.Question}</AccordionTrigger>
+              <AccordionContent>{faq.Answer}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
 
       </main>
       <footer className='text-center p-4 md:p-6'>@ 2025 Cipher Voice. All rights reserved</footer>
