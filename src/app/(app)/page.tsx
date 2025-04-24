@@ -10,13 +10,14 @@ import {
 } from "@/components/ui/carousel"
 
 import Autoplay from 'embla-carousel-autoplay'
+import Image from 'next/image';
 import messages from '@/messages.json'
 import { Check } from 'lucide-react';
 
 const Home = () => {
   return (
     <>
-      <main className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-slate-900 to-slate-950 text-white px-4 md:px-16 py-16">
+      <main className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-slate-900 to-slate-950 text-white px-4 md:px-16  py-16">
         <section className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-5xl font-extrabold drop-shadow-sm">
             Let Your Words Speak, Not Your Identity.
@@ -33,39 +34,41 @@ const Home = () => {
             <p className="flex items-center gap-2"><Check /> Because real change starts with what's real.</p>
           </div>
           <div className="right md:w-1/2 flex justify-center">
-            <img
-              src="anonymous-icone-1.jpg"
+            <Image
+              src="/anonymous-icone-1.jpg"
               alt="Anonymous feedback icon"
+              width={400}
+              height={300}
               className="max-w-full h-auto md:max-w-md opacity-80 hover:opacity-100 transition-opacity"
             />
           </div>
         </div>
 
-        {/* 
-      <Carousel
-      plugins={[Autoplay({delay:2000})]}
-       className="w-full max-w-xs " >
-      <CarouselContent>
-        {
-          messages.map((messages,index)=>(
-            <CarouselItem key={index}>
-            <div className="p-1">
-              <Card >
-                <CardHeader>
-                  {messages.title}
-                </CardHeader>
-                <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-lg font-semibold">{messages.content}</span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-          ))
-        }
-      </CarouselContent>
-      <CarouselPrevious className='text-gray-500' />
-      <CarouselNext className='text-gray-500' />
-    </Carousel> */}
+
+        <Carousel
+          plugins={[Autoplay({ delay: 2000 })]}
+          className="w-full max-w-xs mt-32 " >
+          <CarouselContent>
+            {
+              messages.map((messages, index) => (
+                <CarouselItem key={index}>
+                  <div className="p-1">
+                    <Card >
+                      <CardHeader>
+                        {messages.title}
+                      </CardHeader>
+                      <CardContent className="flex aspect-square items-center justify-center p-6">
+                        <span className="text-lg font-semibold">{messages.content}</span>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
+              ))
+            }
+          </CarouselContent>
+          <CarouselPrevious className='text-gray-500' />
+          <CarouselNext className='text-gray-500' />
+        </Carousel>
 
 
       </main>
