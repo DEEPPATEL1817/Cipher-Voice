@@ -35,14 +35,15 @@ const Home = () => {
           </p>
         </section>
 
-        <div className="flex flex-col-reverse md:flex-row justify-between mx-20 items-center gap-40">
+        <div className="flex flex-col-reverse md:flex-row justify-between mx-20 items-center md:gap-20">
           <div className="right md:w-1/2 flex justify-center p-12">
             <Image
               src="/anonymous-icone-1.jpg"
               alt="Anonymous feedback icon"
-              width={400}
-              height={300}
-              className="max-w-full h-auto md:max-w-md opacity-80 hover:opacity-100 transition-opacity"
+              width={500}
+              height={400}
+              style={{ width: '100%', height: 'auto' }} 
+      className="opacity-80 hover:opacity-100 transition-opacity rounded-lg"
             />
           </div>
           <div className="left md:w-1/2" >
@@ -53,23 +54,23 @@ const Home = () => {
         </div>
 
 
-        <div className='flex flex-col-reverse md:flex-row justify-between gap-40 items-center mx-20'>
-        <div className="flex flex-col w-full md:w-1/2">
-          <p className='mb-3' >{`Everyone has something to say - an appreciation, a suggestion, or even a hard truth.
+        <div className='flex flex-col-reverse md:flex-row justify-between gap-10 items-center mx-28'>
+          <div className="flex flex-col w-full md:w-1/2">
+            <p className='mb-3' >{`Everyone has something to say - an appreciation, a suggestion, or even a hard truth.
             Our platform gives people the space to share honest feedback without fear or filters.
             Whether it's for a friend, a teammate, or a stranger, your words have power.
             Help others grow, reflect, and improve - one message at a time.
             It’s simple, anonymous, and made to spark real conversations.
-            Because growth starts with honest feedback.`} </p><br />
-           <p>{` Every opinion fuels our next move.
-            Your words inspire us to grow, improve, and innovate.<br />
+            Because growth starts with honest feedback.`} </p>
+            <p>{` Every opinion fuels our next move.
+            Your words inspire us to grow, improve, and innovate.
             These stories aren't just feedback—
             they're proof that we’re on the right track.`}
-          </p>
+            </p>
           </div>
           <Carousel
             plugins={[Autoplay({ delay: 2000 })]}
-            className="w-full max-w-xs mt-32 " >
+            className="w-full max-w-xs mt-20 " >
             <CarouselContent>
               {
                 messages.map((messages, index) => (
@@ -98,14 +99,17 @@ const Home = () => {
           <div className='flex justify-center items-center underline font-bold'>
             {`FAQ's`}
           </div>
-          <Accordion type="single" collapsible className="w-full md:w-7xl mt-2 pl-1.5 ">
-            {FAQ.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger>{faq.Question}</AccordionTrigger>
-                <AccordionContent>{faq.Answer}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+
+          <div className="w-full md:w-7xl mx-auto mt-2 pl-1.5 ">
+            <Accordion type="single" collapsible>
+              {FAQ.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger>{faq.Question}</AccordionTrigger>
+                  <AccordionContent>{faq.Answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         </div>
 
       </main>
