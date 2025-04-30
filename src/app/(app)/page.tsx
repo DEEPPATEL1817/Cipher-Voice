@@ -100,7 +100,7 @@ const Home = () => {
             {`FAQ's`}
           </div>
 
-          <div className="w-full md:w-7xl mx-auto mt-2 pl-1.5 ">
+          <div className="w-full md:w-7xl mx-auto mt-2 pl-1.5">
             <Accordion type="single" collapsible>
               {FAQ.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
