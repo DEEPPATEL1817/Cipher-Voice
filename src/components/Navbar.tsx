@@ -21,8 +21,8 @@ const Navbar = () => {
         {
             session ? (
                 <>
-                <span className='mr-4'>Welcome,{user?.username} || {user?.email} </span>
-                <Button className='w-full md:w-auto' onClick={() => signOut()}>logout</Button>
+                <span className='mr-4'>Welcome,{user?.username} | {user?.email} </span>
+                <Button className='md:w-auto' onClick={() => signOut()}>logout</Button>
                 </>
             ) : (
                 <Link href={'/sign-in'}>

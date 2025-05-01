@@ -168,11 +168,11 @@ const Page = () => {
             type="text"
             value={profileUrl}
             disabled
-            className={`input input-bordered w-full p-2 mr-2 transition-all duration-300 ${
-              isCopied ? "bg-blue-100" : ""
+            className={`input input-bordered w-full p-2 mr-2 transition-all duration-300 bg-gray-800 text-white rounded ${
+              isCopied ? "bg-blue-300" : ""
             }`}
           />
-          <Button onClick={copyToClipboard}>Copy</Button>
+          <Button className="p-5" onClick={copyToClipboard}>Copy</Button>
         </div>
       </div>
 
