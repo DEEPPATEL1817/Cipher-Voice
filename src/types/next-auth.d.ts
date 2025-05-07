@@ -33,6 +33,7 @@
 // src/types/next-auth.d.ts
 import 'next-auth';
 import { DefaultSession, DefaultUser } from 'next-auth';
+import { User as UserModel } from "@/models/user";
 
 declare module 'next-auth' {
   interface User extends DefaultUser {
@@ -40,6 +41,7 @@ declare module 'next-auth' {
     isVerified: boolean;
     isAcceptingMessages: boolean;
     username: string;
+    provider: string;
   }
 
   interface Session {
@@ -54,5 +56,6 @@ declare module 'next-auth/jwt' {
     isVerified: boolean;
     isAcceptingMessages: boolean;
     username: string;
+    provider?: string
   }
 }

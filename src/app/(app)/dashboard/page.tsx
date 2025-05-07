@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import axios, { AxiosError } from "axios"
 import { Loader2, RefreshCcw } from "lucide-react"
 import { useSession } from "next-auth/react"
-import { useCallback, useEffect, useState, useRef} from "react"
+import { useCallback, useEffect, useState, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -133,7 +133,7 @@ const Page = () => {
     }
     navigator.clipboard.writeText(profileUrl);
     setIsCopied(true);
-    
+
 
     if (inputRef.current) {
       inputRef.current.setSelectionRange(0, profileUrl.length);
@@ -141,7 +141,7 @@ const Page = () => {
 
     setTimeout(() => {
       setIsCopied(false);
-      
+
     }, 1000);
 
     toast("Profile URL is copied");
@@ -157,22 +157,23 @@ const Page = () => {
 
 
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
+    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white dark:bg-gray-900 rounded w-full max-w-6xl text-gray-900 dark:text-white">
       <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
       <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
+        <h2 className="text-lg font-semibold mb-2">Copy Unique Link</h2>{' '}
         <div className="flex items-center">
           <input
-           ref={inputRef}
+            ref={inputRef}
             type="text"
             value={profileUrl}
             disabled
-            className={`input input-bordered w-full p-2 mr-2 transition-all duration-300 bg-gray-800 text-white rounded ${
-              isCopied ? "bg-blue-300" : ""
-            }`}
+            className={`input input-bordered w-full p-2 mr-2 transition-all duration-300 
+    bg-gray-100 dark:bg-gray-800 rounded-2xl
+    text-black dark:text-white  ${isCopied ? "bg-blue-300" : ""
+              }`}
           />
-          <Button className="p-5" onClick={copyToClipboard}>Copy</Button>
+          <Button className="p-5 cursor-pointer" onClick={copyToClipboard}>Copy</Button>
         </div>
       </div>
 

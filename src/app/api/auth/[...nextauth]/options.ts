@@ -5,6 +5,7 @@ import GitHubProvider from "next-auth/providers/github";
 import bcrypt from 'bcrypt'
 import dbConnect from "@/lib/dbConnection";
 import UserModel from "@/models/user";
+import { isOAuthUser, handleOAuthUser } from "@/helpers/authenticationHelper"
 
 
 // //next auth is using for authentication in which credentials is used ..here just we can add github ,facebook anything in providers
@@ -134,7 +135,7 @@ export const authOptions: NextAuthOptions = {
 
                     const isValidPassword = await bcrypt.compare(
                         credentials.password,
-                        user.password
+                        user.password || ""
                     );
 
                     if (!isValidPassword) return null;
@@ -159,27 +160,86 @@ export const authOptions: NextAuthOptions = {
         }),
         GitHubProvider({
             clientId: process.env.GITHUB_ID as string,
-            clientSecret: process.env.GITHUB_SECRET as string
+            clientSecret: process.env.GITHUB_SECRET as string,
+            profile(profile) {
+                return {
+                    id: profile.id.toString(),
+                    _id: profile.id,
+                    name: profile.name || profile.login,
+                    email: profile.email,
+                    username: profile.login,
+                    isVerified: true,
+                    isAcceptingMessages: true,
+                    provider: 'GitHub'
+
+                }
+            }
         }),
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            authorization: {
+                params: {
+                    prompt: "select_account",
+                    access_type: "offline",
+                    response_type: "code",
+                },
+            },
+            profile(profile) {
+                return {
+                    id: profile.sub,
+                    _id: profile.sub,
+                    name: profile.name,
+                    email: profile.email,
+                    username: profile.name,
+                    image: profile.picture,
+                    isVerified: true,
+                    isAcceptingMessages: true,
+                    provider: 'google'
+
+                }
+            }
         })
     ],
 
-    //extracting info from github and google is remaining the below callback is info of user abstraction manually 
-
     callbacks: {
+        async signIn({ user, account, profile }) {
+            console.log("info from google or github of user:", user)
+            console.log("info from google or github of account:", account)
+            if (account?.provider === 'credentials') {
+                return true; 
+            }
+
+            if (account && isOAuthUser(account)) {
+                try {
+                    const dbUser = await handleOAuthUser(user, account);
+                    // console.log("dbUser :", user)
+
+                    user.username = dbUser.username;
+                    user._id = dbUser._id.toString();
+                    user.isVerified = dbUser.isVerified;
+                    user.isAcceptingMessages = dbUser.isAcceptingMessage;
+                    return true;
+                } catch (error) {
+                    console.error("OAuth sign-in error:", error);
+                    return false;
+                }
+            }
+
+            return false;
+        },
+
         async jwt({ token, user }) {
             if (user) {
                 token._id = user._id;
                 token.email = user.email as string;
                 token.username = user.username;
-                token.isVerified = user.isVerified;
+                token.isVerified = user.isVerified ?? true;
                 token.isAcceptingMessages = user.isAcceptingMessages;
             }
             return token;
         },
+
         async session({ session, token }) {
             if (token) {
                 session.user._id = token._id;
@@ -191,11 +251,14 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
     },
+
     pages: {
         signIn: '/sign-in',
     },
+
     session: {
         strategy: "jwt",
     },
+
     secret: process.env.NEXTAUTH_SECRET,
 };

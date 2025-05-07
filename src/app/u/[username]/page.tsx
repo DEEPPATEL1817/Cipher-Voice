@@ -23,6 +23,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { messageSchema } from '@/schemas/messageSchema';
+import ToggleTheme from '@/components/ToggleTheme'
 
 const specialChar = '||';
 
@@ -35,7 +36,7 @@ const initialMessageString =
 
 export default function SendMessage() {
   const params = useParams<{ username: string }>();
-  const username = params.username;
+  const username = decodeURIComponent(params.username);
 
   const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
   const [isSuggestLoading, setIsSuggestLoading] = useState(false);
@@ -102,7 +103,11 @@ export default function SendMessage() {
   };
 
   return (
-    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
+    <div className='relative min-h-screen bg-white text-black dark:bg-black dark:text-white  '>
+      <div className="absolute top-4 right-4 z-50 cursor-pointer">
+      <ToggleTheme />    
+      </div>  
+    <div className="container mx-auto my-8 p-6 bg-white dark:bg-zinc-900 text-black dark:text-white rounded max-w-4xl">
       <h1 className="text-4xl font-bold mb-6 text-center">
         Public Profile Link
       </h1>
@@ -133,7 +138,7 @@ export default function SendMessage() {
                 Please wait
               </Button>
             ) : (
-              <Button type="submit" disabled={isLoading || !messageContent}>
+              <Button className='' type="submit" disabled={isLoading || !messageContent}>
                 Send It
               </Button>
             )}
@@ -185,6 +190,7 @@ export default function SendMessage() {
           <Button>Create Your Account</Button>
         </Link>
       </div>
+    </div>
     </div>
   );
 }

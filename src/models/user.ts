@@ -19,14 +19,16 @@ const MessageSchema: Schema<Message> = new Schema({
 })
 
 export interface User extends Document {
+    _id: mongoose.Types.ObjectId | string;
     username: string,
     email: string,
-    password: string,
-    verifyCode: string,
-    verifyCodeExp: Date;
+    password?: string,
+    verifyCode?: string,
+    verifyCodeExp?: Date;
     isVerified: boolean,
     isAcceptingMessage: boolean,
-    messages: Message[]
+    messages: Message[],
+    provider: string,
 }
 
 const UserSchema: Schema<User> = new Schema({
@@ -38,22 +40,28 @@ const UserSchema: Schema<User> = new Schema({
     },
     email: {
         type: String,
-        required:[true,"email is req."],
-        trim:true,
+        required: [true, "email is req."],
+        trim: true,
         unique: true,
-        match:[/.+\@.+\..+/,'please use a valid email address']
+        match: [/.+\@.+\..+/, 'please use a valid email address']
     },
-    password:{
+    password: {
         type: String,
-        required:[true,"password is req."],
+        required: function () {
+            return this.provider === 'credentials';
+        }
     },
     verifyCode: {
         type: String,
-        required:[true,"verify code is req."],
+        required: function () {
+            return this.provider === 'credentials';
+        }
     },
     verifyCodeExp: {
         type: Date,
-        required:[true,"verify code Expiry is req."],
+        required: function () {
+            return this.provider === 'credentials';
+        }
     },
     isVerified: {
         type: Boolean,
@@ -63,12 +71,18 @@ const UserSchema: Schema<User> = new Schema({
         type: Boolean,
         default: true,
     },
-    messages : [MessageSchema]
+    provider: {
+        type: String,
+        required: true,
+        enum: ['credentials', 'google', 'github'],
+        default: 'credentials'
+    },
+    messages: [MessageSchema]
 
 })
 
 //export model 
 
-const UserModel = (mongoose.models.User as mongoose.Model<User>)  || mongoose.model<User>("User",UserSchema)
+const UserModel = (mongoose.models.User as mongoose.Model<User>) || mongoose.model<User>("User", UserSchema)
 
 export default UserModel
