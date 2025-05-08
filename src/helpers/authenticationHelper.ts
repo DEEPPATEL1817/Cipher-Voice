@@ -12,21 +12,35 @@ export interface OAuthProfile {
     email?: string;
     username?: string;
     name?: string;
+    provider?: string
 }
 
-export const handleOAuthUser = async (user: OAuthProfile, account: Account): Promise<User> => {
+const formatUsername = (username: string): string => {
+    return username
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')       // Replace spaces with hyphens
+        .replace(/[^a-z0-9-]/g, '') // Remove special characters
+        .replace(/-+/g, '-')        // Replace multiple hyphens with single
+        .replace(/^-|-$/g, '');     // Remove leading/trailing hyphens
+};
+
+export const handleOAuthUser = async (profile: OAuthProfile, account: Account): Promise<User> => {
     await dbConnect();
+
+    const formattedUsername = formatUsername(profile.username || profile.name || "user");
+
     const existingUser = await UserModel.findOne({
         $or: [
-            { email: user.email },
-            { username: user.username }
+            { email: profile.email },
+            { username: formattedUsername}
         ]
     });
 
     if (!existingUser) {
         const newUser = await UserModel.create({
-            username: user.username,
-            email: user.email,
+            username: formattedUsername,
+            email: profile.email,
             isVerified: true,
             isAcceptingMessages: true,
             provider: account.provider

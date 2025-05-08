@@ -4,6 +4,7 @@ export interface ApiResponse {
     success: boolean,
     message: string,
     //isAcceptingMessage is response we sand as a data to the user 
-    isAcceptingMessage?: boolean
+    isAcceptingMessage?: boolean,
     messages?: Array<Message>
+    totalPages?: number
 }

@@ -27,9 +27,29 @@ const Page = () => {
 
   const [profileUrl, setProfileUrl] = useState('');
 
+  const [currentPage, setCurrentPage] = useState(1); // current page
+  const [totalPages, setTotalPages] = useState(1);   // total pages
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [isCopied, setIsCopied] = useState(false);
 
+  const messagesPerPage = 10;
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      fetchMessages(false, newPage);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      fetchMessages(false, newPage);
+    }
+  };
 
   const handleDeleteMessage = (messageId: string) => {
     setMessages(messages.filter((message) => message._id !== messageId));
@@ -63,13 +83,16 @@ const Page = () => {
 
   }, [setValue])
 
-  const fetchMessages = useCallback(async (refresh: boolean = false) => {
+  const fetchMessages = useCallback(async (refresh: boolean = false, page = 1) => {
     setIsLoading(true)
     setIsSwitchLoading(false)
 
     try {
-      const response = await axios.get<ApiResponse>('api/get-all-messagesOf-User')
+      const response = await axios.get<ApiResponse>(`/api/get-all-messagesOf-User?page=${page}&limit=${messagesPerPage}`)
       setMessages(response.data.messages || [])
+
+      setTotalPages(response.data.totalPages || 1);
+      setCurrentPage(page);
 
       if (refresh) {
 
@@ -90,7 +113,7 @@ const Page = () => {
 
   useEffect(() => {
     if (!session || !session.user) return
-    fetchMessages()
+    fetchMessages(false, 1)
     fetchAcceptMessage()
   }, [session, setValue, fetchAcceptMessage, fetchMessages])
 
@@ -128,10 +151,16 @@ const Page = () => {
   const copyToClipboard = () => {
     if (!profileUrl) return;
 
+    const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
+    const urlToCopy = `${baseUrl}/u/${username}`
+
     if (inputRef.current) {
+      inputRef.current.value = urlToCopy;
       inputRef.current.select(); // Select text
+      inputRef.current.setSelectionRange(0, urlToCopy.length);
     }
-    navigator.clipboard.writeText(profileUrl);
+    navigator.clipboard.writeText(urlToCopy);
     setIsCopied(true);
 
 
@@ -142,7 +171,7 @@ const Page = () => {
     setTimeout(() => {
       setIsCopied(false);
 
-    }, 1000);
+    }, 500);
 
     toast("Profile URL is copied");
   };
@@ -154,6 +183,9 @@ const Page = () => {
       </div>
     )
   }
+
+
+
 
 
   return (
@@ -169,8 +201,7 @@ const Page = () => {
             value={profileUrl}
             disabled
             className={`input input-bordered w-full p-2 mr-2 transition-all duration-300 
-    bg-gray-100 dark:bg-gray-800 rounded-2xl
-    text-black dark:text-white  ${isCopied ? "bg-blue-300" : ""
+          rounded-2xl text-black dark:text-white   ${isCopied ? "bg-blue-300" : "bg-gray-100 dark:bg-gray-800"
               }`}
           />
           <Button className="p-5 cursor-pointer" onClick={copyToClipboard}>Copy</Button>
@@ -214,9 +245,29 @@ const Page = () => {
             />
           ))
         ) : (
-          <p>No messages to display.</p>
+          <div className="text-center text-gray-500 dark:text-gray-400 italic">
+            You have no messages yet.
+          </div>
         )}
       </div>
+      <div className="flex justify-between items-center mt-6">
+        <Button
+          variant="outline"
+          onClick={goToPreviousPage}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <Button
+          variant="outline"
+          onClick={goToNextPage}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
+
     </div>
   );
 }

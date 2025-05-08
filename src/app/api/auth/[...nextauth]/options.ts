@@ -5,7 +5,7 @@ import GitHubProvider from "next-auth/providers/github";
 import bcrypt from 'bcrypt'
 import dbConnect from "@/lib/dbConnection";
 import UserModel from "@/models/user";
-import { isOAuthUser, handleOAuthUser,OAuthProfile } from "@/helpers/authenticationHelper"
+import { isOAuthUser, handleOAuthUser, OAuthProfile } from "@/helpers/authenticationHelper"
 
 
 
@@ -94,6 +94,7 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+
             authorization: {
                 params: {
                     prompt: "select_account",
@@ -102,12 +103,20 @@ export const authOptions: NextAuthOptions = {
                 },
             },
             profile(profile) {
+                const username = profile.name
+                    .toLowerCase()
+                    .trim()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+
                 return {
                     id: profile.sub,
                     _id: profile.sub,
                     name: profile.name,
                     email: profile.email,
-                    username: profile.name,
+                    username: username,
                     image: profile.picture,
                     isVerified: true,
                     isAcceptingMessages: true,
@@ -132,9 +141,9 @@ export const authOptions: NextAuthOptions = {
                     return false;
                 }
                 try {
-                    const dbUser = await handleOAuthUser(user as OAuthProfile , account);
+                    const dbUser = await handleOAuthUser(user as OAuthProfile, account);
                     // console.log("dbUser :", user)
-                    
+
                     user.username = dbUser.username;
                     user._id = dbUser._id.toString();
                     user.isVerified = dbUser.isVerified;
