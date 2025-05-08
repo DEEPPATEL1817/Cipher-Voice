@@ -8,7 +8,13 @@ export const isOAuthUser = (account: Account | null):  account is Account => {
     return account?.provider === 'google' || account?.provider === 'github';
 };
 
-export const handleOAuthUser = async (user: any, account: Account): Promise<User> => {
+export interface OAuthProfile {
+    email?: string;
+    username?: string;
+    name?: string;
+}
+
+export const handleOAuthUser = async (user: OAuthProfile, account: Account): Promise<User> => {
     await dbConnect();
     const existingUser = await UserModel.findOne({
         $or: [
