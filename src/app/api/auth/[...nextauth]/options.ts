@@ -207,14 +207,14 @@ export const authOptions: NextAuthOptions = {
             console.log("info from google or github of user:", user)
             console.log("info from google or github of account:", account)
             if (account?.provider === 'credentials') {
-                return true; 
+                return true; // Credential flow already handled in authorize
             }
 
             if (account && isOAuthUser(account)) {
                 try {
                     const dbUser = await handleOAuthUser(user, account);
                     // console.log("dbUser :", user)
-
+                    
                     user.username = dbUser.username;
                     user._id = dbUser._id.toString();
                     user.isVerified = dbUser.isVerified;
