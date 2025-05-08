@@ -203,7 +203,7 @@ export const authOptions: NextAuthOptions = {
     ],
 
     callbacks: {
-        async signIn({ user, account, profile }) {
+        async signIn({ user, account }) {
             console.log("info from google or github of user:", user)
             console.log("info from google or github of account:", account)
             if (account?.provider === 'credentials') {

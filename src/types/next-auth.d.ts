@@ -33,7 +33,7 @@
 // src/types/next-auth.d.ts
 import 'next-auth';
 import { DefaultSession, DefaultUser } from 'next-auth';
-import { User } from "@/models/user";
+
 
 declare module 'next-auth' {
   interface User extends DefaultUser {
